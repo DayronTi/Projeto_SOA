@@ -1,0 +1,7 @@
+python
+python3-venv -y
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+python-dotenv
