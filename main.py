@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- CONFIGURAÇÃO DO BANCO DE DADOS ---
-# Substitua pelo IP da sua VM de SGBD (db-ws)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
