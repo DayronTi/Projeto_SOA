@@ -1,4 +1,4 @@
-python
+streamlit requestspython
 python3-venv -y
 fastapi
 uvicorn
