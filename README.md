@@ -70,8 +70,96 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 ```python
 streamlit run app.py
 ```
+<br>
+<h3>LivroBase</h3>
+Utilizado para entrada de dados (POST e PUT). Recebe o que o usuário envia para o sistema.
+
+```JSON
+{
+  "titulo": "string",
+  "autor": "string",
+  "ano": 0,
+  "editora": "string",
+  "localizacao": "string",
+  "edicao": "string"
+}
+```
 
 
+<h3>LivroResponse</h3>
+Utilizado para saída de dados (Resposta da API). Inclui o id gerado pelo SGBD para permitir o rastreio do registro.
+
+```JSON
+{
+  "id": 0,
+  "titulo": "string",
+  "autor": "string",
+  "ano": 0,
+  "editora": "string",
+  "localizacao": "string",
+  "edicao": "string"
+}
+```
+
+
+<h3>Documentção API</h3>
+<br>
+<h3>HTTPValidationError (object)</h3>
+
+```
+    detail (array<object>)
+        Items (object)
+            loc (array<string | integer>)
+                Items (string | integer)
+                Any of (string | integer)
+                    #0: string
+                    #1: integer
+    msg (string)
+    type (string)
+    input (any)
+    ctx (object)
+```
+
+<h3>LivroBase (object)</h3>
+Define a estrutura de dados para um livro na API. Recebe o que o usuário envia.
+
+```
+    titulo (string)
+    autor (string)
+    ano (integer)
+    editora (string)
+    localizacao (string)
+    edicao (string)
+```
+
+
+<h3>LivroResponse (object)</h3>
+Incrementa id para o modelo de resposta, permitindo que a API retorne o ID do livro criado ou listado.
+
+```
+    titulo (string)
+    autor (string)
+    ano (integer)
+    editora (string)
+    localizacao (string)
+    edicao (string)
+    id (integer)
+```
+
+
+<h3>ValidationError (object)</h3>
+
+```
+    loc (array<string | integer>)
+        Items (string | integer)
+        Any of (string | integer)
+            #0: string
+            #1: integer
+    msg (string)
+    type (string)
+    input (any)
+    ctx (object)
+```
 
 
 
