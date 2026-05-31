@@ -15,7 +15,7 @@ from auth.jwt_handler import (
 
 load_dotenv()
 
-# --- CONFIGURAÇÃO DO BANCO DE DADOS ---
+# Configuração do banco de dados
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL)
@@ -27,8 +27,12 @@ SessionLocal = sessionmaker(
 
 Base = declarative_base()
 
-# --- MODELO DE PERSISTÊNCIA (SGBD) ---
+# Modelo da tabela livros
 class LivroDB(Base):
+    """
+    Define a estrutura da tabela livros no banco de dados.
+    """
+
     __tablename__ = "livros"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -41,7 +45,7 @@ class LivroDB(Base):
 
 Base.metadata.create_all(bind=engine)
 
-# --- MODELOS DA API ---
+# Modelo utilizado para entrada de dados
 class LivroBase(BaseModel):
     titulo: str
     autor: str
@@ -50,28 +54,31 @@ class LivroBase(BaseModel):
     localizacao: str
     edicao: str
 
+# Modelo utilizado nas respostas da API
 class LivroResponse(LivroBase):
     id: int
 
     class Config:
         from_attributes = True
 
-# --- INICIALIZAÇÃO ---
-app = FastAPI(title="Web Service Biblioteca Online")
+app = FastAPI(
+    title="Web Service Biblioteca Online"
+)
 
-# Usuário de teste
+# Usuário de teste para autenticação
 fake_user = {
     "username": "admin",
     "password": "123456"
 }
 
-# Configuração JWT
+# Configuração do JWT
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="token"
 )
 
-# --- BANCO DE DADOS ---
+# Sessão do banco de dados
 def get_db():
+
     db = SessionLocal()
 
     try:
@@ -80,7 +87,7 @@ def get_db():
     finally:
         db.close()
 
-# --- AUTENTICAÇÃO ---
+# Endpoint responsável pelo login
 @app.post("/token")
 def login(
     form_data: OAuth2PasswordRequestForm = Depends()
@@ -107,6 +114,7 @@ def login(
         "token_type": "bearer"
     }
 
+# Validação do token recebido
 def get_current_user(
     token: str = Depends(oauth2_scheme)
 ):
@@ -121,14 +129,15 @@ def get_current_user(
 
     return payload
 
-# --- ROTA PRINCIPAL ---
+# Página inicial da API
 @app.get("/")
 def home():
+
     return {
         "mensagem": "Web Service de Integração de Biblioteca Ativo"
     }
 
-# --- CRIAR LIVRO ---
+# Cadastro de livros
 @app.post(
     "/livros/",
     response_model=LivroResponse
@@ -139,7 +148,7 @@ def criar_livro(
     db: Session = Depends(get_db)
 ):
 
-    db_livro = LivroDB(**livro.model_dump())
+    db_livro = LivroDB(**livro.dict())
 
     db.add(db_livro)
     db.commit()
@@ -147,7 +156,7 @@ def criar_livro(
 
     return db_livro
 
-# --- LISTAR LIVROS ---
+# Consulta de livros
 @app.get(
     "/livros/",
     response_model=List[LivroResponse]
@@ -159,7 +168,7 @@ def listar_livros(
 
     return db.query(LivroDB).all()
 
-# --- ATUALIZAR LIVRO ---
+# Atualização de livros
 @app.put(
     "/livros/{livro_id}",
     response_model=LivroResponse
@@ -183,7 +192,7 @@ def atualizar_livro(
             detail="Livro não encontrado"
         )
 
-    for key, value in livro_atualizado.model_dump().items():
+    for key, value in livro_atualizado.dict().items():
         setattr(db_livro, key, value)
 
     db.commit()
@@ -191,7 +200,7 @@ def atualizar_livro(
 
     return db_livro
 
-# --- DELETAR LIVRO ---
+# Exclusão de livros
 @app.delete("/livros/{livro_id}")
 def deletar_livro(
     livro_id: int,
