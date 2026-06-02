@@ -9,7 +9,65 @@ O sistema foi desenhado para rodar em um ambiente distribuído, simulando um cen
 
 1.  **Camada de Apresentação (Frontend)**: Desenvolvida em **Streamlit (Python)**, rodando na máquina cliente. Ela consome os recursos do Web Service via requisições HTTP.
 2.  **Camada de Negócio (Backend)**: Um Web Service construído com **FastAPI**, rodando em um servidor **Debian**. Ele gerencia as regras de negócio e a comunicação com o banco.
-3.  **Camada de Dados (SGBD)**: Servidor **PostgreSQL** rodando em uma segunda instância **Debian**, responsável pela persistência e integridade das informações.
+3.  **Camada de Dados (SGBD)**: Servidor **PostgreSQL** rodando em uma segunda instância **Debian**, responsável pela persistência e integridade das informações.7
+<br>
+
+<h2>Autenticação Baseada em JWT (JSON Web Token)</h2>
+<p>A aplicação utiliza autenticação baseada em JWT para proteger os endpoints do Web Service.</p>
+
+<h2>Fluxo de Autenticação</h2>
+<p>O fluxo de autenticação funciona da seguinte forma:</p>
+<ul>
+    <li>
+        <strong>Login do Usuário:</strong> Realizado através do endpoint:
+        <code>POST /token</code>
+    </li>
+    <li>
+        <strong>Geração de Token:</strong> A API valida as credenciais e gera um token JWT temporário.
+    </li>
+    <li>
+        <strong>Envio do Token:</strong> O token é retornado ao cliente e deve ser enviado no cabeçalho das próximas requisições:
+        <br><code>Authorization: Bearer TOKEN</code>
+    </li>
+    <li>
+        <strong>Validação Automática:</strong> As rotas protegidas validam automaticamente:
+        <ul>
+            <li>Autenticidade do token</li>
+            <li>Assinatura digital</li>
+            <li>Tempo de expiração</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Tratamento de Erro:</strong> Caso o token esteja inválido ou expirado, a API retorna:
+        <br><code>401 Unauthorized</code>
+    </li>
+</ul>
+
+<h2>Rotas Protegidas</h2>
+<p>As seguintes rotas exigem autenticação JWT:</p>
+<ul>
+    <li><code>GET /livros/</code></li>
+    <li><code>POST /livros/</code></li>
+    <li><code>PUT /livros/{id}</code></li>
+    <li><code>DELETE /livros/{id}</code></li>
+</ul>
+
+<h2>Configuração JWT</h2>
+<ul>
+    <li><strong>Algoritmo:</strong> HS256</li>
+    <li><strong>Expiração do token:</strong> 30 minutos</li>
+    <li><strong>Fluxo:</strong> OAuth2 Password Flow</li>
+</ul>
+
+<h2>Funcionamento da Segurança</h2>
+<ul>
+    <li>
+        <strong>Validação no FastAPI:</strong> O sistema utiliza o mecanismo <code>Depends(get_current_user)</code> para validar automaticamente os tokens recebidos.
+    </li>
+    <li>
+        <strong>Documentação Interativa:</strong> A documentação Swagger UI também integra autenticação JWT, permitindo realizar login diretamente pela interface <code>/docs</code>.
+    </li>
+</ul>
 
 <br>
 <h2>Configuração do Banco de Dados</h2>
